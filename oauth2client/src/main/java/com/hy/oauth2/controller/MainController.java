@@ -1,5 +1,8 @@
 package com.hy.oauth2.controller;
 
+import java.util.Map;
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,6 +32,15 @@ public class MainController extends BaseController {
 	@RequestMapping("/login")
 	public String login(){
 		System.out.println(serviceTokenUri);
+		return "login";
+	}
+	@RequestMapping("/authorizationCodeCallback")
+	public String authorizationCodeCallback(){
+		Map params = request.getParameterMap();
+		Set keys = params.keySet();
+		for(Object key : keys) {
+			System.out.println(key+","+params.get(key).toString());
+		}
 		return "login";
 	}
 	
