@@ -1,6 +1,6 @@
 @media ( min-width: 1200px ) {
   .container-custom {
-    width: 960px;
+    width: auth;
   }
 }
 .main {
@@ -129,6 +129,7 @@
 }
 .extends-third-part-icon,
 .third-part .sina,
+.third-part .huiye,
 .third-part .linkin,
 .third-part .baidu,
 .third-part .qq,
@@ -150,7 +151,7 @@
   color: #666;
   margin-bottom: 11px;
 }
-.third-part .sina {
+.third-part .huiye {
   background-position: 0 0;
 }
 .third-part .linkin {
