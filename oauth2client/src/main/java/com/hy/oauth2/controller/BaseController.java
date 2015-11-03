@@ -10,6 +10,7 @@ public class BaseController {
 	protected HttpServletRequest request;
 	protected HttpServletResponse response;
 	
+	
 	/**
 	 * 调用controlle前先调用此方法
 	 * @param page 当前页

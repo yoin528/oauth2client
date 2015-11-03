@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
@@ -23,6 +24,12 @@ public class MainController extends BaseController {
 	protected String unityUserInfoUri;
 	@Value("#{properties['mobileUserInfoUri']}")
 	protected String mobileUserInfoUri;
+	@Value("#{properties['appKey']}")
+	protected String appKey;
+	@Value("#{properties['appSecret']}")
+	protected String appSecret;
+	@Value("#{properties['authorizationCodeCallback']}")
+	protected String authorizationCodeCallback;
 	
 	@RequestMapping("/")
 	public String main(){
@@ -30,8 +37,11 @@ public class MainController extends BaseController {
 		return "index";
 	}
 	@RequestMapping("/login")
-	public String login(){
-		System.out.println(serviceTokenUri);
+	public String login(Model model){
+		model.addAttribute("appKey", appKey);
+		model.addAttribute("appSecret", appSecret);
+		model.addAttribute("authorizationCodeCallback", authorizationCodeCallback);
+		model.addAttribute("serviceAuthorizationUri", serviceAuthorizationUri);
 		return "login";
 	}
 	@RequestMapping("/authorizationCodeCallback")
