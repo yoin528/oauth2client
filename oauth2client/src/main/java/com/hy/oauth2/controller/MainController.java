@@ -16,7 +16,7 @@ import com.hy.oauth2.auth.model.OauthUser;
 import com.hy.oauth2.auth.server.OauthService;
 
 /**
- * @author LDZ   
+ * @author LDZ    
  * @date 2015年11月2日 上午10:06:12 
  */
 @Controller

@@ -14,7 +14,7 @@ import com.hy.oauth2.auth.json.JsonUtils;
 import com.hy.oauth2.auth.model.AbstractOauth;
 
 /**
- * @author Shengzhao Li
+ * @author Shengzhao Li 
  */
 public abstract class AbstractResponseHandler<T extends AbstractOauth> implements HttpResponseHandler {
     protected static final String ERROR_DATA_KEY = "<oauth>";
