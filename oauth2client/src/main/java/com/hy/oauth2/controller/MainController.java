@@ -89,17 +89,19 @@ public class MainController extends BaseController {
 			AccessTokenResponseHandler responseHandler = new AccessTokenResponseHandler();
 	        executor.execute(responseHandler);
 	        AccessToken token = responseHandler.getAccessToken();
-	        OauthUser authUser = oauthService.loadUnityUser(token.getAccessToken());
-	        if(authUser!=null) {
-	        	if (authUser.error()) {
-	                model.addAttribute("message", authUser.getErrorDescription());
-	                model.addAttribute("error", authUser.getError());
-	                return "oauth_error";
-	            }else {
-	            	
-	            	request.getSession().setAttribute("user", authUser);
-	            }
+	        if(token.error()) {
+	        	model.addAttribute("message", token.getErrorDescription());
+                model.addAttribute("error", token.getError());
+                return "oauth_error";
 	        }
+	        OauthUser authUser = oauthService.loadUnityUser(token.getAccessToken());
+        	if (authUser.error()) {
+                model.addAttribute("message", authUser.getErrorDescription());
+                model.addAttribute("error", authUser.getError());
+                return "oauth_error";
+            }else {
+            	request.getSession().setAttribute("user", authUser);
+            }
 		}
 		return "redirect:/user/info";
 	}

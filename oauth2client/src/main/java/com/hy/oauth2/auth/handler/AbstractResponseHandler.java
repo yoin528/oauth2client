@@ -30,9 +30,9 @@ public abstract class AbstractResponseHandler<T extends AbstractOauth> implement
     }
     protected T responseToErrorDto(MkkHttpResponse response, T dto) {
         final StatusLine statusLine = response.httpResponse().getStatusLine();
-
         dto.setError(String.valueOf(statusLine.getStatusCode()));
         dto.setErrorDescription(statusLine.getReasonPhrase());
+        dto.setOriginalText(response.responseAsString());
         return dto;
     }
 
