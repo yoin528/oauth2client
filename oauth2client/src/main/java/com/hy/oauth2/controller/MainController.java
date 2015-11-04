@@ -70,7 +70,7 @@ public class MainController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping("/authorizationCodeCallback")
-	public String authorizationCodeCallback(String code,String state){
+	public String authorizationCodeCallback(String code,String state,Model model){
 		boolean validate = true;
 		//存在state则校验是否相同
 		if(!StringUtils.isEmpty(state)) {
@@ -91,7 +91,14 @@ public class MainController extends BaseController {
 	        AccessToken token = responseHandler.getAccessToken();
 	        OauthUser authUser = oauthService.loadUnityUser(token.getAccessToken());
 	        if(authUser!=null) {
-	        	request.getSession().setAttribute("user", authUser);
+	        	if (authUser.error()) {
+	                model.addAttribute("message", authUser.getErrorDescription());
+	                model.addAttribute("error", authUser.getError());
+	                return "oauth_error";
+	            }else {
+	            	
+	            	request.getSession().setAttribute("user", authUser);
+	            }
 	        }
 		}
 		return "redirect:/user/info";
