@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.hy.oauth2.auth.handler.AccessTokenResponseHandler;
 import com.hy.oauth2.auth.httpclient.HttpClientExecutor;
@@ -127,11 +128,9 @@ public class MainController extends BaseController {
 		//服务器认证地址
 		model.addAttribute("userAuthorizationUri", serviceAuthorizationUri);
         //本地回调地址
-        model.addAttribute("redirect_uri", authorizationCodeCallback);
+        model.addAttribute("redirect_uri", "http://www.p2p.com/client/authorization_code_callback");
         //客户端id
         model.addAttribute("clientId", appKey);
-        //客户端密钥
-        model.addAttribute("clientSecret", appSecret);
         //状态码
         model.addAttribute("state", UUID.randomUUID().toString());
 		return "test/authorization_code";
@@ -172,5 +171,19 @@ public class MainController extends BaseController {
             return "auth_error";
         }
 
+    }
+	
+	@RequestMapping(value = "code_access_token", method = RequestMethod.POST)
+    public String codeAccessToken(AuthAccessToken tokenDto, Model model) throws Exception {
+        final AccessToken accessTokenDto = oauthService.retrieveAccessToken(tokenDto);
+        if (accessTokenDto.error()) {
+            model.addAttribute("message", accessTokenDto.getErrorDescription());
+            model.addAttribute("error", accessTokenDto.getError());
+            return "oauth_error";
+        } else {
+            model.addAttribute("accessTokenDto", accessTokenDto);
+            model.addAttribute("unityUserInfoUri", unityUserInfoUri);
+            return "access_token_result";
+        }
     }
 }
