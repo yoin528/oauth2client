@@ -16,7 +16,8 @@
 
 <div class="alert alert-danger">
     <h4>${error}</h4>
-    ${message}
+    ${message}<br/>
+    ${desc}
 </div>
 </body>
 </html>

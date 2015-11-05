@@ -49,9 +49,9 @@
               <div class="third-part tracking-ad" data-mod="popu_27">
               	<span>第三方帐号登录</span>
               	<span><font color="red"></font></span>
-              	<a href="${serviceAuthorizationUri}?response_type=code&client_id=${appKey}&redirect_uri=${authorizationCodeCallback}" class="huiye"></a>
+              	<a href="${serviceAuthorizationUri}?response_type=code&client_id=${appKey}&redirect_uri=${authorizationCodeCallback}&state=${state}" class="huiye"></a>
               	<a id="baiduAuthorizationUrl" href="https://openapi.baidu.com/oauth/2.0/authorize?response_type=code&amp;client_id=cePqkUpKCBrcnQtARTNPxxQG&amp;redirect_uri=https%3A%2F%2Fpassport.csdn.net%2Faccount%2Flogin%3Foauth_provider%3DBaiduProvider" class="baidu"></a>
-              	<a id="qqAuthorizationUrl" href="https://graph.qq.com/oauth2.0/authorize?response_type=code&amp;client_id=100270989&amp;redirect_uri=https%3A%2F%2Fpassport.csdn.net%2Faccount%2Flogin%3Foauth_provider%3DQQProvider&amp;state=test" class="qq"></a>
+              	<a id="qqAuthorizationUrl" href="authorization_code" class="qq"></a>
               	<a id="githubAuthorizationUrl" href="https://github.com/login/oauth/authorize?client_id=4bceac0b4d39cf045157&amp;redirect_uri=https%3A%2F%2Fpassport.csdn.net%2Faccount%2Flogin%3Foauth_provider%3DGitHubProvider" class="github"></a>
               </div>
             </div>
