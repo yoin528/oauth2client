@@ -24,6 +24,7 @@
     <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="properties" ref="properties"/>
     </bean>
-
+    
+	<bean id="oauthConfig" class="com.hy.oauth2.auth.model.OauthConfig"></bean>
 
 </beans>

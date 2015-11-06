@@ -1,24 +1,23 @@
 package com.hy.oauth2.controller;
 
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.hy.oauth2.auth.handler.AccessTokenResponseHandler;
-import com.hy.oauth2.auth.httpclient.HttpClientExecutor;
 import com.hy.oauth2.auth.model.AccessToken;
 import com.hy.oauth2.auth.model.AuthAccessToken;
 import com.hy.oauth2.auth.model.AuthCallback;
 import com.hy.oauth2.auth.model.AuthorizationCode;
-import com.hy.oauth2.auth.model.OauthUser;
+import com.hy.oauth2.auth.model.OauthConfig;
 import com.hy.oauth2.auth.server.OauthService;
 
 /**
@@ -27,22 +26,8 @@ import com.hy.oauth2.auth.server.OauthService;
  */
 @Controller
 public class MainController extends BaseController {
-	@Value("#{properties['service-access-token-uri']}")
-	protected String serviceTokenUri;
-	@Value("#{properties['service-user-authorization-uri']}")
-	protected String serviceAuthorizationUri;
-	@Value("#{properties['application-host']}")
-	protected String applicationHost;
-	@Value("#{properties['unityUserInfoUri']}")
-	protected String unityUserInfoUri;
-	@Value("#{properties['mobileUserInfoUri']}")
-	protected String mobileUserInfoUri;
-	@Value("#{properties['appKey']}")
-	protected String appKey;
-	@Value("#{properties['appSecret']}")
-	protected String appSecret;
-	@Value("#{properties['authorizationCodeCallback']}")
-	protected String authorizationCodeCallback;
+	@Autowired
+	private OauthConfig oauthConfig;
 	@Autowired
 	private OauthService oauthService;
 	
@@ -59,10 +44,10 @@ public class MainController extends BaseController {
 	@RequestMapping("/login")
 	public String login(Model model){
 		//配置第三方，汇业认证所需要的参数
-		model.addAttribute("appKey", appKey);
-		model.addAttribute("appSecret", appSecret);
-		model.addAttribute("authorizationCodeCallback", authorizationCodeCallback);
-		model.addAttribute("serviceAuthorizationUri", serviceAuthorizationUri);
+		model.addAttribute("appKey", oauthConfig.getAppKey());
+		model.addAttribute("appSecret", oauthConfig.getAppSecret());
+		model.addAttribute("authorizationCodeCallback", oauthConfig.getAuthorizationCodeCallback());
+		model.addAttribute("serviceAuthorizationUri", oauthConfig.getServiceAuthorizationUri());
 		//可自动生成state状态码，用于回调时检验是否同一个请求，如果不传则在回调时不会返回state参数
 		String uuid = UUID.randomUUID().toString();
 		request.getSession().getServletContext().setAttribute("_state", uuid);
@@ -88,20 +73,11 @@ public class MainController extends BaseController {
 			}
 		}
 		if(validate) {
-			/*HttpClientExecutor executor = new HttpClientExecutor(serviceTokenUri);
-			executor.addRequestParam("grantType", "authorization_code");
-			executor.addRequestParam("clientId", appKey);
-			executor.addRequestParam("clientSecret", appSecret);
-			executor.addRequestParam("code", code);
-			executor.addRequestParam("redirectUri", authorizationCodeCallback);
-			AccessTokenResponseHandler responseHandler = new AccessTokenResponseHandler();
-	        executor.execute(responseHandler);
-	        AccessToken token = responseHandler.getAccessToken();*/
 			AuthAccessToken accessToken = new AuthAccessToken();
-            accessToken.setAccessTokenUri(serviceTokenUri);
-            accessToken.setClientId(appKey);
-            accessToken.setClientSecret(appSecret);
-            accessToken.setRedirectUri(authorizationCodeCallback);
+            accessToken.setAccessTokenUri(oauthConfig.getServiceTokenUri());
+            accessToken.setClientId(oauthConfig.getAppKey());
+            accessToken.setClientSecret(oauthConfig.getAppSecret());
+            accessToken.setRedirectUri(oauthConfig.getAuthorizationCodeCallback());
             accessToken.setCode(code);
             AccessToken token = oauthService.retrieveAccessToken(accessToken);
 	        if(token.error()) {
@@ -110,7 +86,19 @@ public class MainController extends BaseController {
                 model.addAttribute("desc", token.getOriginalText());
                 return "oauth_error";
 	        }
-	        OauthUser authUser = oauthService.loadUnityUser(token.getAccessToken());
+	        Map<String,Object> data = oauthService.loadData(token.getAccessToken(), oauthConfig.getUserInfoUri());
+	        if(data.get("error")!=null) {
+	        	Set<String> keys = data.keySet();
+	        	for(String key:keys) {
+	        		System.out.println(key+","+data.get(key));
+	        	}
+	        }else {
+	        	model.addAttribute("message", data.get("error"));
+                model.addAttribute("error", data.get("desc"));
+                model.addAttribute("desc", data.get("content"));
+                return "oauth_error";
+	        }
+	        /*OauthUser authUser = oauthService.loadUnityUser(token.getAccessToken());
         	if (authUser.error()) {
                 model.addAttribute("message", authUser.getErrorDescription());
                 model.addAttribute("error", authUser.getError());
@@ -118,7 +106,7 @@ public class MainController extends BaseController {
                 return "oauth_error";
             }else {
             	request.getSession().setAttribute("user", authUser);
-            }
+            }*/
 		}
 		return "redirect:/user/info";
 	}
@@ -129,17 +117,17 @@ public class MainController extends BaseController {
 	}
 	
 	
-	//--------------测试
+	//--------------测试---------------
 	
 	//使用authorization_code，跳转到authorization_code页面准备提交
 	@RequestMapping("/authorization_code")
 	public String authorization_code(Model model) {
 		//服务器认证地址
-		model.addAttribute("userAuthorizationUri", serviceAuthorizationUri);
+		model.addAttribute("userAuthorizationUri", oauthConfig.getServiceAuthorizationUri());
         //本地回调地址
         model.addAttribute("redirect_uri", "http://www.p2p.com/client/authorization_code_callback");
         //客户端id
-        model.addAttribute("clientId", appKey);
+        model.addAttribute("clientId", oauthConfig.getAppKey());
         //状态码
         model.addAttribute("state", UUID.randomUUID().toString());
 		return "test/authorization_code";
@@ -170,9 +158,9 @@ public class MainController extends BaseController {
         } else if (validate) {
             //Go to retrieve access_token form
             AuthAccessToken accessTokenDto = oauthService.createAuthAccessToken(callbackDto);
-            accessTokenDto.setAccessTokenUri(serviceTokenUri);
-            accessTokenDto.setClientId(appKey);
-            accessTokenDto.setClientSecret(appSecret);
+            accessTokenDto.setAccessTokenUri(oauthConfig.getServiceTokenUri());
+            accessTokenDto.setClientId(oauthConfig.getAppKey());
+            accessTokenDto.setClientSecret(oauthConfig.getAppSecret());
             accessTokenDto.setRedirectUri("http://www.p2p.com/client/authorization_code_callback");
             model.addAttribute("accessTokenDto", accessTokenDto);
 			return "test/code_access_token";
@@ -194,7 +182,7 @@ public class MainController extends BaseController {
             return "oauth_error";
         } else {
             model.addAttribute("accessTokenDto", accessTokenDto);
-            model.addAttribute("unityUserInfoUri", unityUserInfoUri);
+            model.addAttribute("unityUserInfoUri", oauthConfig.getUnityUserInfoUri());
             return "test/access_token_result";
         }
     }

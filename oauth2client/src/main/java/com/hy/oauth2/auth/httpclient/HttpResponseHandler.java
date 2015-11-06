@@ -5,8 +5,5 @@ package com.hy.oauth2.auth.httpclient;
  */
 
 public interface HttpResponseHandler {
-
-
     public void handleResponse(MkkHttpResponse response);
-
 }
