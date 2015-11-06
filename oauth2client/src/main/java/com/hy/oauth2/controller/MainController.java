@@ -82,11 +82,13 @@ public class MainController extends BaseController {
 		if(!StringUtils.isEmpty(state)) {
 			String _state = (String) request.getSession().getServletContext().getAttribute("_state");
 			if(!state.equals(_state)) {
-				validate = false;
+				model.addAttribute("message", "非法状态码: " + state);
+	            model.addAttribute("error", "无效的 state");
+	            return "oauth_error";
 			}
 		}
 		if(validate) {
-			HttpClientExecutor executor = new HttpClientExecutor(serviceTokenUri);
+			/*HttpClientExecutor executor = new HttpClientExecutor(serviceTokenUri);
 			executor.addRequestParam("grantType", "authorization_code");
 			executor.addRequestParam("clientId", appKey);
 			executor.addRequestParam("clientSecret", appSecret);
@@ -94,7 +96,14 @@ public class MainController extends BaseController {
 			executor.addRequestParam("redirectUri", authorizationCodeCallback);
 			AccessTokenResponseHandler responseHandler = new AccessTokenResponseHandler();
 	        executor.execute(responseHandler);
-	        AccessToken token = responseHandler.getAccessToken();
+	        AccessToken token = responseHandler.getAccessToken();*/
+			AuthAccessToken accessToken = new AuthAccessToken();
+            accessToken.setAccessTokenUri(serviceTokenUri);
+            accessToken.setClientId(appKey);
+            accessToken.setClientSecret(appSecret);
+            accessToken.setRedirectUri(authorizationCodeCallback);
+            accessToken.setCode(code);
+            AccessToken token = oauthService.retrieveAccessToken(accessToken);
 	        if(token.error()) {
 	        	model.addAttribute("message", token.getErrorDescription());
                 model.addAttribute("error", token.getError());
@@ -161,9 +170,12 @@ public class MainController extends BaseController {
         } else if (validate) {
             //Go to retrieve access_token form
             AuthAccessToken accessTokenDto = oauthService.createAuthAccessToken(callbackDto);
+            accessTokenDto.setAccessTokenUri(serviceTokenUri);
+            accessTokenDto.setClientId(appKey);
+            accessTokenDto.setClientSecret(appSecret);
+            accessTokenDto.setRedirectUri("http://www.p2p.com/client/authorization_code_callback");
             model.addAttribute("accessTokenDto", accessTokenDto);
-            model.addAttribute("host", applicationHost);
-            return "test/code_access_token";
+			return "test/code_access_token";
         } else {
             //illegal state
             model.addAttribute("message", "Illegal \"state\": " + callbackDto.getState());
@@ -175,7 +187,7 @@ public class MainController extends BaseController {
 	
 	@RequestMapping(value = "code_access_token", method = RequestMethod.POST)
     public String codeAccessToken(AuthAccessToken tokenDto, Model model) throws Exception {
-        final AccessToken accessTokenDto = oauthService.retrieveAccessToken(tokenDto);
+        AccessToken accessTokenDto = oauthService.retrieveAccessToken(tokenDto);
         if (accessTokenDto.error()) {
             model.addAttribute("message", accessTokenDto.getErrorDescription());
             model.addAttribute("error", accessTokenDto.getError());
@@ -183,7 +195,7 @@ public class MainController extends BaseController {
         } else {
             model.addAttribute("accessTokenDto", accessTokenDto);
             model.addAttribute("unityUserInfoUri", unityUserInfoUri);
-            return "access_token_result";
+            return "test/access_token_result";
         }
     }
 }

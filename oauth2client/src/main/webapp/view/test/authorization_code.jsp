@@ -24,7 +24,7 @@
                 	</tr>
                 	<tr>
                 		<td>response_type</td>
-                		<td><input type="text" name="code" value="code" /></td>
+                		<td><input type="text" name="responseType" value="code" /></td>
                 	</tr>
                 	<tr>
                 		<td>scope</td>
