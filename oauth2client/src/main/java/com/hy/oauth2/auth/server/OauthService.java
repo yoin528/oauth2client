@@ -14,7 +14,7 @@ import com.hy.oauth2.auth.model.RefreshAccessToken;
 public interface OauthService {
     AccessToken retrieveAccessToken(AuthAccessToken token);
     AuthAccessToken createAuthAccessToken(AuthCallback callback);
-    OauthUser loadUnityUser(String accessToken);
+    OauthUser loadUnityUser(String accessToken,String uri);
     AccessToken retrievePasswordAccessToken(AuthAccessToken authAccessToken);
     AccessToken refreshAccessToken(RefreshAccessToken refreshAccessToken);
     AccessToken retrieveCredentialsAccessToken(AuthAccessToken authAccessToken);

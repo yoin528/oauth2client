@@ -41,12 +41,15 @@ public class OauthServiceImpl implements OauthService {
                 .setAccessTokenUri(oauthConfig.getServiceTokenUri())
                 .setCode(callback.getCode());
     }
-    public OauthUser loadUnityUser(String accessToken) {
+    public OauthUser loadUnityUser(String accessToken,String uri) {
         LOG.debug("Load Unity-User_Info by access_token = {}", accessToken);
         if (StringUtils.isEmpty(accessToken)) {
             return new OauthUser("无效的access_token", "'access_token'是空的!");
         } else {
-            HttpClientExecutor executor = new HttpClientExecutor(oauthConfig.getUnityUserInfoUri());
+        	if(uri==null||"".equals(uri)) {
+        		uri = oauthConfig.getUnityUserInfoUri();
+        	}
+            HttpClientExecutor executor = new HttpClientExecutor(uri);
             executor.addRequestParam("access_token", accessToken);
             OauthUserResponseHandler responseHandler = new OauthUserResponseHandler();
             executor.execute(responseHandler);

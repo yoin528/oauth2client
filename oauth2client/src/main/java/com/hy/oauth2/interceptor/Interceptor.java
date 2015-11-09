@@ -15,13 +15,15 @@ public class Interceptor implements HandlerInterceptor {
 	public boolean preHandle(HttpServletRequest request,
 			HttpServletResponse response, Object handler) throws Exception {
 		Object curuser =  request.getSession().getAttribute("user");
+		Object token =  request.getSession().getAttribute("_token");
 		if("login".equals(request.getRequestURI())){
 			return true;
 		}
 		
-		if(curuser != null){
+		if(curuser != null||token!=null){
 			return true;
 		}
+		
 		throw new RuntimeException("请先登陆!");
 	}
 

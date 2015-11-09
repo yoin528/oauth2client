@@ -1,7 +1,6 @@
 package com.hy.oauth2.controller;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +17,7 @@ import com.hy.oauth2.auth.model.AuthAccessToken;
 import com.hy.oauth2.auth.model.AuthCallback;
 import com.hy.oauth2.auth.model.AuthorizationCode;
 import com.hy.oauth2.auth.model.OauthConfig;
+import com.hy.oauth2.auth.model.OauthUser;
 import com.hy.oauth2.auth.server.OauthService;
 
 /**
@@ -79,25 +79,26 @@ public class MainController extends BaseController {
             accessToken.setClientSecret(oauthConfig.getAppSecret());
             accessToken.setRedirectUri(oauthConfig.getAuthorizationCodeCallback());
             accessToken.setCode(code);
-            AccessToken token = oauthService.retrieveAccessToken(accessToken);
+            final AccessToken token = oauthService.retrieveAccessToken(accessToken);
 	        if(token.error()) {
 	        	model.addAttribute("message", token.getErrorDescription());
                 model.addAttribute("error", token.getError());
                 model.addAttribute("desc", token.getOriginalText());
                 return "oauth_error";
 	        }
-	        Map<String,Object> data = oauthService.loadData(token.getAccessToken(), oauthConfig.getUserInfoUri());
-	        if(data.get("error")!=null) {
-	        	Set<String> keys = data.keySet();
-	        	for(String key:keys) {
-	        		System.out.println(key+","+data.get(key));
-	        	}
-	        }else {
-	        	model.addAttribute("message", data.get("error"));
-                model.addAttribute("error", data.get("desc"));
-                model.addAttribute("desc", data.get("content"));
-                return "oauth_error";
-	        }
+//无法使用httpclient马上取得认证系统的用户数据(request请求不一致，需要从前台重新发出请求)
+//	        Map<String,Object> data = oauthService.loadData(token.getAccessToken(), oauthConfig.getUserInfoUri());
+//	        if(data.get("error")!=null) {
+//	        	Set<String> keys = data.keySet();
+//	        	for(String key:keys) {
+//	        		System.out.println(key+","+data.get(key));
+//	        	}
+//	        }else {
+//	        	model.addAttribute("message", data.get("error"));
+//                model.addAttribute("error", data.get("desc"));
+//                model.addAttribute("desc", data.get("content"));
+//                return "oauth_error";
+//	        }
 	        /*OauthUser authUser = oauthService.loadUnityUser(token.getAccessToken());
         	if (authUser.error()) {
                 model.addAttribute("message", authUser.getErrorDescription());
@@ -107,12 +108,17 @@ public class MainController extends BaseController {
             }else {
             	request.getSession().setAttribute("user", authUser);
             }*/
+	        request.getSession().setAttribute("_token", token);
+	        model.addAttribute("token", token);
+	        model.addAttribute("infoUri", oauthConfig.getUserInfoUri());
+	        
 		}
-		return "redirect:/user/info";
+		return "index";
 	}
 	@RequestMapping("/user/info")
-	public String userInfo(Model model) {
-		model.addAttribute("userDto",request.getSession().getAttribute("user"));
+	public String userInfo(Model model,String token) {
+		final Map<String,Object> data = oauthService.loadData(token, oauthConfig.getUserInfoUri());
+		System.out.println(data);
 		return "userInfo";
 	}
 	
@@ -186,4 +192,20 @@ public class MainController extends BaseController {
             return "test/access_token_result";
         }
     }
+	@RequestMapping("unity_user_info")
+	public String unityUserInfo(String access_token, Model model) {
+		OauthUser userDto = oauthService.loadUnityUser(access_token,oauthConfig.getUserInfoUri());
+		System.out.println(userDto);
+//        if (userDto.error()) {
+//            //error
+//            model.addAttribute("message", userDto.getErrorDescription());
+//            model.addAttribute("error", userDto.getError());
+//            return "redirect:oauth_error";
+//        } else {
+//            model.addAttribute("userDto", userDto);
+//        }
+
+            return "test/unity_user_info";
+    }
+	
 }
