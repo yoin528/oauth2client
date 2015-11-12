@@ -6,10 +6,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
+import com.hy.oauth2.auth.model.OauthUser;
+
 public class BaseController {
 	protected HttpServletRequest request;
 	protected HttpServletResponse response;
-	
+	protected OauthUser member;
 	
 	/**
 	 * 调用controlle前先调用此方法
@@ -21,5 +23,6 @@ public class BaseController {
 		this.request = request;
 		this.response = response;
 		request.setAttribute("base","http://"  +  request.getServerName()  +  ":"  +  request.getServerPort()  +  request.getContextPath());
+		member = (OauthUser)request.getSession().getAttribute("user");
 	}
 }

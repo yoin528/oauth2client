@@ -11,23 +11,23 @@ import java.util.List;
  */
 public class OauthUser extends AbstractOauth {
 	private static final long serialVersionUID = 1L;
-	private String openId;
+	private String openid;
     private String email;
-    private String phone;
+//    private String phone;
 //    private String username;
     private String nickname;
-    private List<String> privileges = new ArrayList<String>();
+    private List<String> authorities = new ArrayList<String>();
     public OauthUser() { }
     public OauthUser(String error, String errorDescription) {
         this.error = error;
         this.errorDescription = errorDescription;
     }
     
-    public String getOpenId() {
-		return openId;
+	public String getOpenid() {
+		return openid;
 	}
-	public void setOpenId(String openId) {
-		this.openId = openId;
+	public void setOpenid(String openid) {
+		this.openid = openid;
 	}
 	public String getEmail() {
         return email;
@@ -35,26 +35,27 @@ public class OauthUser extends AbstractOauth {
     public void setEmail(String email) {
         this.email = email;
     }
-    public String getPhone() {
-        return phone;
-    }
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
+//    public String getPhone() {
+//        return phone;
+//    }
+//    public void setPhone(String phone) {
+//        this.phone = phone;
+//    }
 //    public String getUsername() {
 //        return username;
 //    }
 //    public void setUsername(String username) {
 //        this.username = username;
 //    }
-    public List<String> getPrivileges() {
-        return privileges;
-    }
-    public void setPrivileges(List<String> privileges) {
-        this.privileges = privileges;
-    }
+    
 	public String getNickname() {
 		return nickname;
+	}
+	public List<String> getAuthorities() {
+		return authorities;
+	}
+	public void setAuthorities(List<String> authorities) {
+		this.authorities = authorities;
 	}
 	public void setNickname(String nickname) {
 		this.nickname = nickname;

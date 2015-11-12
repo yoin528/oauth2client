@@ -117,10 +117,8 @@ public class MainController extends BaseController {
 		return "redirect:/";
 	}
 	@RequestMapping("/user/info")
-	public String userInfo(Model model,String token) {
-		final Map<String,Object> data = oauthService.loadData(token, oauthConfig.getUserInfoUri());
-		System.out.println(data);
-		model.addAttribute("userDto", data);
+	public String userInfo(Model model) {
+		model.addAttribute("userDto", member);
 		return "userInfo";
 	}
 	

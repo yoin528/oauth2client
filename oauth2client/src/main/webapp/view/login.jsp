@@ -19,7 +19,7 @@
           <div class="login-banner col-sm-6 col-md-7 col-lg-7 hidden-xs"></div>
           <div class="login-user col-xs-12 col-sm-6 col-md-5 col-lg-5" style="width:350px;">
             <div class="login-part">
-              <h3>帐号登录</h3>
+              <h3>第三方帐号登录</h3>
               <div class="user-info">
                 <div class="user-pass">
                   <form id="fm1" action="" method="post">

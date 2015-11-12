@@ -12,6 +12,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.PropertyNamingStrategy;
 import org.codehaus.jackson.type.TypeReference;
 
+import com.hy.oauth2.auth.model.OauthUser;
+
 
 /**
  * jason工具类
@@ -74,6 +76,7 @@ public class JsonUtils {
 	}
 	/**
 	 * 将{"user_name":"bflee","id_number":"123456"}"注入到Java驼峰写法的userName,idNumber属性中
+	 * 注意:字段含有大写时就算相同也无法转换，如：openId的json字段不能转为java的openId属性
 	 * @author LDZ
 	 * @Descripteion
 	 * @date 2015年11月12日上午11:22:54
@@ -144,4 +147,9 @@ public class JsonUtils {
 		}
 		return null;
 	}*/
+	public static void main(String[] args) {
+		String json = "{\"openid\":\"69de0b31-309d-4f51-86e2-507d2c7c20ab\",\"nickname\":\"拖鞋\",\"email\":\"118151662@qq.com\",\"authorities\":[\"ROLE_MEMBER\"]}";
+		OauthUser user = JsonUtils.jsonToJ2eeObj(json, OauthUser.class);
+		System.out.println(user.getOpenid());
+	}
 }

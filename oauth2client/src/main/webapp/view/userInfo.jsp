@@ -4,18 +4,19 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>用户中心</title>
+<title>第三方系统用户中心</title>
 </head>
 <body>
-	<dl class="dl-horizontal">
-	    <dt>username</dt>
-	    <dd><code>${userDto.username}</code></dd>
-	    <dt>id</dt>
-	    <dd><code>${userDto.id}</code></dd>
-	    <dt>password</dt>
-	    <dd><code>${userDto.password}</code></dd>
-	    <dt>role_id</dt>
-	    <dd><code>${userDto.role_id}</code></dd>
-	</dl>
+	<table>
+		<tr>
+			<td>昵称：</td><td>${userDto.nickname}</td>
+		</tr>
+		<tr>
+			<td>开放ID：</td><td>${userDto.openid}</td>
+		</tr>
+		<tr>
+			<td>邮件：</td><td>${userDto.email}</td>
+		</tr>
+	</table>
 </body>
 </html>
