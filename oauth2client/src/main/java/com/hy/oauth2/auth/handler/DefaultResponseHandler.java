@@ -10,18 +10,16 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.hy.oauth2.auth.handler.AbstractResponseHandler.ErrorDefaultHandler;
 import com.hy.oauth2.auth.httpclient.HttpResponseHandler;
 import com.hy.oauth2.auth.httpclient.MkkHttpResponse;
 import com.hy.oauth2.auth.json.JsonUtils;
-import com.hy.oauth2.auth.model.OauthUser;
 
 public class DefaultResponseHandler implements HttpResponseHandler {
     private Map<String,Object> data = new HashMap<String,Object>();
     public void handleResponse(MkkHttpResponse response) {
     	String text = response.responseAsString();
         if (response.isResponse200()) {
-        	data = JsonUtils.textToBean(data, text);
+        	data = JsonUtils.jsonToObj(text, Map.class);
         	data.put("originalText", text);
         } else {
         	parseErrorXML(response);

@@ -1,8 +1,8 @@
 package com.hy.oauth2.auth.model;
 
-import org.apache.commons.lang.StringUtils;
-
 import java.io.Serializable;
+
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author Shengzhao Li

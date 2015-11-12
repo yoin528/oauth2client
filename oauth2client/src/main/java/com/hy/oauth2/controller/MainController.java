@@ -1,11 +1,12 @@
 package com.hy.oauth2.controller;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -79,6 +80,7 @@ public class MainController extends BaseController {
             accessToken.setClientSecret(oauthConfig.getAppSecret());
             accessToken.setRedirectUri(oauthConfig.getAuthorizationCodeCallback());
             accessToken.setCode(code);
+            //使用code取得token
             final AccessToken token = oauthService.retrieveAccessToken(accessToken);
 	        if(token.error()) {
 	        	model.addAttribute("message", token.getErrorDescription());
@@ -86,9 +88,9 @@ public class MainController extends BaseController {
                 model.addAttribute("desc", token.getOriginalText());
                 return "oauth_error";
 	        }
-//无法使用httpclient马上取得认证系统的用户数据(request请求不一致，需要从前台重新发出请求)
+	        //使用token换取用户信息
 //	        Map<String,Object> data = oauthService.loadData(token.getAccessToken(), oauthConfig.getUserInfoUri());
-//	        if(data.get("error")!=null) {
+//	        if(data.get("error")==null) {
 //	        	Set<String> keys = data.keySet();
 //	        	for(String key:keys) {
 //	        		System.out.println(key+","+data.get(key));
@@ -99,7 +101,7 @@ public class MainController extends BaseController {
 //                model.addAttribute("desc", data.get("content"));
 //                return "oauth_error";
 //	        }
-	        /*OauthUser authUser = oauthService.loadUnityUser(token.getAccessToken());
+	        OauthUser authUser = oauthService.loadUnityUser(token.getAccessToken(),oauthConfig.getUserInfoUri());
         	if (authUser.error()) {
                 model.addAttribute("message", authUser.getErrorDescription());
                 model.addAttribute("error", authUser.getError());
@@ -107,18 +109,18 @@ public class MainController extends BaseController {
                 return "oauth_error";
             }else {
             	request.getSession().setAttribute("user", authUser);
-            }*/
-	        request.getSession().setAttribute("_token", token);
-	        model.addAttribute("token", token);
-	        model.addAttribute("infoUri", oauthConfig.getUserInfoUri());
+            	request.getSession().setAttribute("_token", token);
+            	model.addAttribute("user", authUser);
+            }
 	        
 		}
-		return "index";
+		return "redirect:/";
 	}
 	@RequestMapping("/user/info")
 	public String userInfo(Model model,String token) {
 		final Map<String,Object> data = oauthService.loadData(token, oauthConfig.getUserInfoUri());
 		System.out.println(data);
+		model.addAttribute("userDto", data);
 		return "userInfo";
 	}
 	

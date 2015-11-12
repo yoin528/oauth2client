@@ -11,34 +11,29 @@ import java.util.List;
  */
 public class OauthUser extends AbstractOauth {
 	private static final long serialVersionUID = 1L;
-	private boolean archived;
+	private String openId;
     private String email;
-    private String guid;
     private String phone;
-    private String username;
+//    private String username;
+    private String nickname;
     private List<String> privileges = new ArrayList<String>();
     public OauthUser() { }
     public OauthUser(String error, String errorDescription) {
         this.error = error;
         this.errorDescription = errorDescription;
     }
-    public boolean isArchived() {
-        return archived;
-    }
-    public void setArchived(boolean archived) {
-        this.archived = archived;
-    }
-    public String getEmail() {
+    
+    public String getOpenId() {
+		return openId;
+	}
+	public void setOpenId(String openId) {
+		this.openId = openId;
+	}
+	public String getEmail() {
         return email;
     }
     public void setEmail(String email) {
         this.email = email;
-    }
-    public String getGuid() {
-        return guid;
-    }
-    public void setGuid(String guid) {
-        this.guid = guid;
     }
     public String getPhone() {
         return phone;
@@ -46,16 +41,22 @@ public class OauthUser extends AbstractOauth {
     public void setPhone(String phone) {
         this.phone = phone;
     }
-    public String getUsername() {
-        return username;
-    }
-    public void setUsername(String username) {
-        this.username = username;
-    }
+//    public String getUsername() {
+//        return username;
+//    }
+//    public void setUsername(String username) {
+//        this.username = username;
+//    }
     public List<String> getPrivileges() {
         return privileges;
     }
     public void setPrivileges(List<String> privileges) {
         this.privileges = privileges;
     }
+	public String getNickname() {
+		return nickname;
+	}
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
+	}
 }

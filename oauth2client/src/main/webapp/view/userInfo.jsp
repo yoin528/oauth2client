@@ -10,14 +10,12 @@
 	<dl class="dl-horizontal">
 	    <dt>username</dt>
 	    <dd><code>${userDto.username}</code></dd>
-	    <dt>guid</dt>
-	    <dd><code>${userDto.guid}</code></dd>
-	    <dt>phone</dt>
-	    <dd><code>${userDto.phone}</code></dd>
-	    <dt>email</dt>
-	    <dd><code>${userDto.email}</code></dd>
-	    <dt>privileges</dt>
-	    <dd><code>${userDto.privileges}</code></dd>
+	    <dt>id</dt>
+	    <dd><code>${userDto.id}</code></dd>
+	    <dt>password</dt>
+	    <dd><code>${userDto.password}</code></dd>
+	    <dt>role_id</dt>
+	    <dd><code>${userDto.role_id}</code></dd>
 	</dl>
 </body>
 </html>

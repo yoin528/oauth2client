@@ -23,7 +23,7 @@ public abstract class AbstractResponseHandler<T extends AbstractOauth> implement
         if (text.startsWith(ERROR_DATA_KEY)) {
             dto = parseErrorXML(response, dto);
         } else {
-            dto = JsonUtils.textToBean(dto, text);
+            dto = (T) JsonUtils.jsonToJ2eeObj(text, dto.getClass());
             dto.setOriginalText(text);
         }
         return dto;
